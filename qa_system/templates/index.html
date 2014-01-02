@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>QAS</title>
+</head>
+<body bgcolor=D2DCF7>
+<hr>	
+<h1>Question Answering System, By Charles Ochoa.</h1>
+	<hr/>
+{% if asked %}
+	Gracias por preguntar
+	<form>
+		<input Type="BUTTON" VALUE="ASK again" ONCLICK="window.location.href='http://127.0.0.1:8000/qa_system/'"> 
+	</form>
+	<br>
+	<h3>RESULTADOS<h3>
+		<form>
+			<table border="1" bgcolor=D2F7D9>
+				<tr>
+					<th>Pregunta</th>
+					<th>Respuestas</th>
+					<th>Link de Origen</th>
+					<th>Tiempo de Conexion a Internet</th>
+					<th>Tiempo de Pre-procesamiento</th>
+					<th>Tiempo de Entrenamiento</th>
+					<th>Tiempo de Recall</th>
+					<th>Mejor Respuesta</th>
+				</tr>
+				{% for r in results %}
+					<tr>
+						<td><font size="3">{{r.0.question}}</font></td>
+						<td><font size="2">
+							{% for d in r.1 %}
+								{{d.content_txt}}
+								<br><br>
+							{% endfor %}
+						</font></td>
+						<td><font size="2">
+							{% for d in r.1 %}
+								{{d.link}}
+								<br><br>
+							{% endfor %}
+						</font></td>
+						<td>{{r.0.retrieval_time}}</td>
+						<td>{{r.0.preprocessing_time}}</td>
+						<td>{{r.0.training_time}}</td>
+						<td>{{r.0.recall_time}}</td>
+						<td><font size="2">
+							Primera<input type="radio" name="succesful_answer" value="1ra Respuesta"><br>
+							Segunda<input type="radio" name="succesful_answer" value="2ra Respuesta"><br>
+							Tercera<input type="radio" name="succesful_answer" value="3ra Respuesta"><br>
+							Ninguna<input type="radio" name="succesful_answer" value="No Respuesta"> 
+						</font></td>
+					</tr>
+				{% endfor %}
+			</table>
+		</form>
+{% else %}
+
+	<form action="." method="POST" align="center">
+		Deje la pregunta en Blanco para la prueba con las preguntas del sistema.
+		{% csrf_token %}
+		{{form.as_p}}
+		<input type="submit" name="test" value="TEST"/>
+	</form>
+{% endif %}	
+
+</body>
+</html>-
