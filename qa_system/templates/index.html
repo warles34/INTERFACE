@@ -15,7 +15,8 @@
 	</form>
 	<br>
 	<h3>RESULTADOS<h3>
-		<form>
+		
+			{% csrf_token %}
 			<table border="1" bgcolor=D2F7D9>
 				<tr>
 					<th>Pregunta</th>
@@ -46,20 +47,19 @@
 						<td>{{r.0.preprocessing_time}}</td>
 						<td>{{r.0.training_time}}</td>
 						<td>{{r.0.recall_time}}</td>
-						<td><font size="2">
-							Primera<input type="radio" name="succesful_answer" value="1ra Respuesta"><br>
-							Segunda<input type="radio" name="succesful_answer" value="2ra Respuesta"><br>
-							Tercera<input type="radio" name="succesful_answer" value="3ra Respuesta"><br>
-							Ninguna<input type="radio" name="succesful_answer" value="No Respuesta"> 
-						</font></td>
+						<td></td>
 					</tr>
 				{% endfor %}
 			</table>
-		</form>
+			<form action="update/">
+				Desea modificar datos?
+				<input type="submit" value="MODIFICAR"/>
+
+			</form>
 {% else %}
 
 	<form action="." method="POST" align="center">
-		Deje la pregunta en Blanco para la prueba con las preguntas del sistema.
+		Al realizar el TEST el sistema no tomara en cuenta .
 		{% csrf_token %}
 		{{form.as_p}}
 		<input type="submit" name="test" value="TEST"/>
@@ -67,4 +67,4 @@
 {% endif %}	
 
 </body>
-</html>-
+</html>
