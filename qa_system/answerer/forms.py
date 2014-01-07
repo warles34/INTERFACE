@@ -7,12 +7,12 @@ from django import forms
 
 
 class QuestionForm(forms.Form):
-    
+    ALGORITHMS = (
+    	('eu', 'Euclidean'),
+    	('fe', 'Fuzzy Euclidean'),
+    	('co', 'Cosine'),
+    	('ja', 'Jaccard')
+    )
     Question = forms.CharField(widget=forms.TextInput(),required=False)
     Is_test = forms.BooleanField(required=False)
-
-class UpdateForm(forms.Form):
-	CORRECT = (
-		1,2,3,-1)
-	rank = forms.ChoiceField(choices=CORRECT)
-	
+    training_algorithm = forms.ChoiceField(choices=ALGORITHMS)

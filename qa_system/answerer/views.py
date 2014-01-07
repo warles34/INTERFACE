@@ -16,10 +16,11 @@ def index(request):
 	asked = False # Definir si se realizo la pregunta
 	quest = ""
 	results = []
-	questions = []
+	questions_id = []
 	results_table = []
 	request.session['update_ids'] = []
 	request.session['update_values'] = []
+	algorithms = dict([('eu', 'Euclidean'),('fe', 'Fuzzy Euclidean'),('co', 'Cosine'),('ja', 'Jaccard')])
 	if request.method =="POST": 
 		WhyForm = QuestionForm(request.POST)
 		if WhyForm.is_valid():
@@ -29,17 +30,24 @@ def index(request):
 			quest = WhyForm.cleaned_data['Question']
 			quest = quest.lower()
 			is_test = WhyForm.cleaned_data['Is_test']
+			train_algo = WhyForm.cleaned_data['training_algorithm']
 			if not(is_test):
 				test_set = [quest]
 			for quest in test_set:
 				for elem in all_results:
 					if elem.question == quest:
-						questions.append(quest)
-						break
+						same_question_results = Results.objects.filter(question=elem.question)
+						for r in same_question_results:
+							if r.training_algorithm == train_algo:
+								questions_id.append(r.id)
+								break
+						if r.training_algorithm == train_algo:
+							break
+
 				else:			
-					results = main(quest,False)
+					results = main(quest,train_algo,False)
 					for w_matrix in results:
-						r = Results(question=quest,retrieval_time=w_matrix.retrieve_time, preprocessing_time=w_matrix.preprocessing_time, training_time=w_matrix.training_time, recall_time=w_matrix.recall_time)
+						r = Results(question=quest,training_algorithm=train_algo,retrieval_time=w_matrix.retrieve_time, preprocessing_time=w_matrix.preprocessing_time, training_time=w_matrix.training_time, recall_time=w_matrix.recall_time)
 						r.save()
 						for x in range(0,3):
 							try:
@@ -49,16 +57,16 @@ def index(request):
 								print e
 								break
 						
-					questions.append(quest)
+					questions_id.append(r.id)
 			
 	else:
 		WhyForm = QuestionForm()
-	for q in questions:
-		res = Results.objects.get(question=q)
+	for id_ in questions_id:
+		res = Results.objects.get(id=id_)
 		ans = Document.objects.filter(to_result=res.id)
 		print ans
 		results_table.append([res,ans])
-	ctx = {'form':WhyForm, 'asked':asked, 'results':results_table}
+	ctx = {'form':WhyForm, 'asked':asked, 'results':results_table, 'algorithms':algorithms}
 	asked = False
 	return render_to_response('index.html',ctx, context_instance=RequestContext(request))
 
@@ -70,11 +78,18 @@ def update(request):
 	if request.method == "POST":
 		if request.POST['test'] == "BUSCAR":
 			searched = True
-			res = Results.objects.get(pk=request.POST['id'])
-			question = res.question
-			ans = Document.objects.filter(to_result=res.id)
-			for x in range(len(ans)):
-				answers.append(ans[x])
+			try:
+				print request.POST['question']
+				print request.POST['algorithm']
+				res = Results.objects.get(question=request.POST['question'],training_algorithm=request.POST['algorithm'])
+
+				question = res.question
+				ans = Document.objects.filter(to_result=res.id)
+				for x in range(len(ans)):
+					answers.append(ans[x])
+			except Exception, e:
+				request.method = ""
+				searched = False
 		elif request.POST['test'] == "MODIFICAR":
 			print request.POST['succesful_answer']
 			if request.POST['succesful_answer']:

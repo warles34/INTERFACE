@@ -26,7 +26,7 @@
 					<th>Tiempo de Pre-procesamiento</th>
 					<th>Tiempo de Entrenamiento</th>
 					<th>Tiempo de Recall</th>
-					<th>Mejor Respuesta</th>
+					<th>Algoritmo Utilizado</th>
 				</tr>
 				{% for r in results %}
 					<tr>
@@ -47,7 +47,7 @@
 						<td>{{r.0.preprocessing_time}}</td>
 						<td>{{r.0.training_time}}</td>
 						<td>{{r.0.recall_time}}</td>
-						<td></td>
+						<td>{{r.0.training_algorithm}}</td>
 					</tr>
 				{% endfor %}
 			</table>
@@ -58,7 +58,7 @@
 			</form>
 {% else %}
 
-	<form action="." method="POST" align="center">
+	<form action="." method="POST">
 		Al realizar el TEST el sistema no tomara en cuenta .
 		{% csrf_token %}
 		{{form.as_p}}

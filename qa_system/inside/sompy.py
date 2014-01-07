@@ -19,6 +19,7 @@ from random import *
 from math import *
 import sys
 import scipy
+import time
 
 def min_max_range_matrix(matrix):
     l = 1000
@@ -32,7 +33,7 @@ def min_max_range_matrix(matrix):
 
 class SOM:
 
-    def __init__(self, height=10, width=10, FV_size=10, learning_rate=0.005):
+    def __init__(self, training_algorithm, height=10, width=10, FV_size=10, learning_rate=0.005):
 
         #print "DENTRO DE SOMPY __INIT__"
         #print "   FV_size"
@@ -43,11 +44,12 @@ class SOM:
         self.radius = (height+width)/3
         self.learning_rate = learning_rate
         self.nodes = scipy.array([[ [random() for i in range(FV_size)] for x in range(width)] for y in range(height)])
+        self.training_algorithm = training_algorithm
 
 
     # train_vector: [ FV0, FV1, FV2, ...] -> [ [...], [...], [...], ...]
     # train vector may be a list, will be converted to a list of scipy arrays
-    def train(self, iterations=1000, train_vector=[[]], epsilon=0.001):
+    def train(self, iterations=1000, train_vector=[[]], epsilon=0.1):
         #print "DENTRO DE SOMPY TRAIN"
         for t in range(len(train_vector)):
             #print "   train_vector[t]  =  " + str(len(train_vector[t]))
@@ -56,10 +58,14 @@ class SOM:
         delta_nodes = scipy.array([[[0 for i in range(self.FV_size)] for x in range(self.width)] for y in range(self.height)])
         i = 0
         old = delta_nodes
-        while i <= iterations:
+        while i <= iterations and self.difference(old) > epsilon:
+            print "difference(new,old)"
+            print self.difference(old)
+            print "epsilon"
             print self.difference(old) > epsilon
             print self.difference(delta_nodes)
             print i <= iterations
+            time.sleep(3)
             i+=1
             st = "[["
             for x in range(self.height):
@@ -139,7 +145,18 @@ class SOM:
         print "scipy.argmin((((self.nodes - target_FV)**2).max(axis=2))**0.5)"
         print str(scipy.argmin((((self.nodes - target_FV)**2).max(axis=2))**0.5))
         exit(-1)'''
-        loc = self.euclidean_coefficient(target_FV)
+        if self.training_algorithm == "eu":
+            print "USING EUCLIDEAN"
+            loc = self.euclidean_coefficient(target_FV)
+        elif self.training_algorithm == "co":
+            print "USING COSINE"
+            loc = self.cosine_coefficient(target_FV)
+        elif self.training_algorithm == "ja":
+            print "USING JACCARD"
+            loc = self.jaccard_coefficient(target_FV)
+        elif self.training_algorithm == "fe":
+            print "USING FUZZY"
+            loc = self.fuzzy_coefficient(target_FV)
         r = 0
         while loc > self.width:
             loc -= self.width
@@ -149,11 +166,47 @@ class SOM:
 
     def euclidean_coefficient(self,target_FV):
         return scipy.argmin((((self.nodes - target_FV)**2).max(axis=2))**0.5)
+
+    def fuzzy_coefficient(self,target_FV):
+        min_array = []
+        for f in self.nodes:
+            for c in f:
+                min_array.append(scipy.amin([c,(1-target_FV)],axis=1))
+        return scipy.argmin(min_array)
         
-    # Queda pendiente la distancia angular por el coseno de los vectores
     def cosine_coefficient(self, target_FV):
+        #print target_FV
+        #print "temp = (self.nodes * target_FV)"
+        temp = (self.nodes * target_FV)
+        #print temp
+        #print "temp = temp.sum(axis=2)"
+        temp = temp.sum(axis=2)
+        #print temp
+        #print "temp_2 = (self.nodes**2)"
+        temp_2 = (self.nodes**2)
+        #print temp_2
+        #print "temp_2 = temp_2.sum(axis=2)"
+        temp_2 = temp_2.sum(axis=2)
+        #print temp_2
+        #print "temp_3 = (target_FV**2)"
+        temp_3 = (target_FV**2)
+        #print temp_3
+        #print "temp_3 = temp_3.sum()"
+        temp_3 = temp_3.sum()
+        #print temp_3
+        #print "temp_3 = temp_3**0.5"
+        temp_3 = temp_3**0.5
+        #print temp_3
+        #print "temp_4 = temp_2*temp_3"
+        temp_4 = temp_2*temp_3
+        #print temp_4
+        #print "temp_f = temp / temp_4"
+        temp_f = temp / temp_4
+        #print temp_f
+        return scipy.argmin(temp_f)
+
         #(a*b).sum(axis=2) / (((a**2).sum(axis=2) * (b**2).sum())**0.5)
-        return scipy.argmin(((self.nodes * target_FV).sum(axis=2) / ((self.nodes**2).sum(axis=2) * (target_FV**2).sum()**0.5)))
+        return scipy.argmin((self.nodes * target_FV).sum(axis=2) / ((self.nodes**2).sum(axis=2) * (target_FV**2).sum()**0.5))
 
     def jaccard_coefficient(self,target_FV):
         return scipy.argmin((self.nodes * target_FV).sum(axis=2) / (((self.nodes**2).sum(axis=2)) + ((target_FV**2).sum()) - ((self.nodes * target_FV).sum(axis=2))))
@@ -187,7 +240,7 @@ class SOM:
         #print delta_nodes
         delta = 0
         for x in range(len(self.nodes)):
-            delta =+ sum(abs(self.nodes[x] - delta_nodes[x]))
+            delta =+ ((self.nodes[x] - delta_nodes[x])**2).sum(axis=1)
         #print delta
         return sum(delta)
 

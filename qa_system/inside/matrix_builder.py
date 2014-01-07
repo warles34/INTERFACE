@@ -61,6 +61,7 @@ class WeightedMatrix:
 		self.min_distance_cluster = None
 		self.documents_in_cluster_indexes = []		#list of integer(size of the recall)
 		self.most_similar_document_indexes = []
+		self.training_algorithm = "eu"
 		self.retrieve_time = 0
 		self.preprocessing_time = 0
 		self.training_time = 0
@@ -241,7 +242,7 @@ class WeightedMatrix:
 
 
 	def question_cluster_distance(self):
-		(q_x,q_y) = self.SOM_cluster.best_match(self.question_TF_IDF_vector)
+		(q_x,q_y) = self.SOM_cluster.best_match(array(self.question_TF_IDF_vector))
 		min_ = 1000
 		min_x = -1
 		min_y = -1
@@ -264,7 +265,7 @@ class WeightedMatrix:
 
 
 
-	def create_SOM(self,x,y,I,LR=0.05):
+	def create_SOM(self,x,y,I,LR=0.0005):
 		#print self.word_list
 		#print self.number_distinct_words
 		#for e in self.TF_IDF_matrix:
@@ -273,7 +274,7 @@ class WeightedMatrix:
 		#print
 		#exit(-1)
 		if self.SOM_cluster == None:
-			self.SOM_cluster = SOM(x,y,self.number_distinct_words,LR)
+			self.SOM_cluster = SOM(self.training_algorithm,x,y,self.number_distinct_words,LR)
 		self.SOM_cluster.train(I,self.TF_IDF_matrix)
 
 

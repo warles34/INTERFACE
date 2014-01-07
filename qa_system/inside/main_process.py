@@ -21,18 +21,18 @@ q_line_random = [18635, 39876, 41977, 52101, 53187, 53196, 57840, 86647, 88168, 
 WIKIPEDIA_WEBPAGE = 'http://en.wikipedia.org'
 file_name_form = re.compile(r'http://en.wikipedia.org/wiki/(.+)',re.DOTALL)
 
-def main(question,is_test,page_number=10,window=100,clusters_x=10,clusters_y=10,iterations=15,directory='Resultados',term_frequency=0,offline_dir=0):
+def main(question,training_algorithm,is_test,page_number=10,window=100,clusters_x=10,clusters_y=10,iterations=15,directory='Resultados',term_frequency=0,offline_dir=0):
 	results = []
 	if is_test:
 		for question in test_set:
-			results.append(qa_system(question,page_number,window,clusters_x,clusters_y,iterations,directory,term_frequency,offline_dir))
+			results.append(qa_system(question,training_algorithm,page_number,window,clusters_x,clusters_y,iterations,directory,term_frequency,offline_dir))
 	else:
-		results.append(qa_system(question,page_number,window,clusters_x,clusters_y,iterations,directory,term_frequency,offline_dir))
+		results.append(qa_system(question,training_algorithm,page_number,window,clusters_x,clusters_y,iterations,directory,term_frequency,offline_dir))
 	return results
 
 
 
-def qa_system(question,page_number,window,clusters_x,clusters_y,iterations,directory,term_frequency,offline_dir):
+def qa_system(question,training_algorithm,page_number,window,clusters_x,clusters_y,iterations,directory,term_frequency,offline_dir):
 	t_ = time()
 	day_date = str(datetime.now())
  	FOLDER_CONTAINER = directory + "/" + day_date
@@ -119,6 +119,7 @@ def qa_system(question,page_number,window,clusters_x,clusters_y,iterations,direc
 	
 	print "Creando matriz de pesos"
 	w_matrix = WeightedMatrix()
+	w_matrix.training_algorithm = training_algorithm
 	w_matrix.retrieve_time = onlinetime
 	w_matrix.insert_values(question_lemma_document,FOLDER_LEMMA,FOLDER_TXT)
 	w_matrix.document_links = used_links
