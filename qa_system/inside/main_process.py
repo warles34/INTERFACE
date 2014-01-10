@@ -21,18 +21,18 @@ q_line_random = [18635, 39876, 41977, 52101, 53187, 53196, 57840, 86647, 88168, 
 WIKIPEDIA_WEBPAGE = 'http://en.wikipedia.org'
 file_name_form = re.compile(r'http://en.wikipedia.org/wiki/(.+)',re.DOTALL)
 
-def main(question,training_algorithm,is_test,page_number=10,window=100,clusters_x=10,clusters_y=10,iterations=15,directory='Resultados',term_frequency=0,offline_dir=0):
+def main(question,training_algorithm,is_test,v_expand,page_number=10,window=100,clusters_x=10,clusters_y=10,iterations=15,directory='Resultados',term_frequency=0,offline_dir=0):
 	results = []
 	if is_test:
 		for question in test_set:
-			results.append(qa_system(question,training_algorithm,page_number,window,clusters_x,clusters_y,iterations,directory,term_frequency,offline_dir))
+			results.append(qa_system(question,training_algorithm,v_expand,page_number,window,clusters_x,clusters_y,iterations,directory,term_frequency,offline_dir))
 	else:
-		results.append(qa_system(question,training_algorithm,page_number,window,clusters_x,clusters_y,iterations,directory,term_frequency,offline_dir))
+		results.append(qa_system(question,training_algorithm,v_expand,page_number,window,clusters_x,clusters_y,iterations,directory,term_frequency,offline_dir))
 	return results
 
 
 
-def qa_system(question,training_algorithm,page_number,window,clusters_x,clusters_y,iterations,directory,term_frequency,offline_dir):
+def qa_system(question,training_algorithm,v_expand,page_number,window,clusters_x,clusters_y,iterations,directory,term_frequency,offline_dir):
 	t_ = time()
 	day_date = str(datetime.now())
  	FOLDER_CONTAINER = directory + "/" + day_date
@@ -88,7 +88,6 @@ def qa_system(question,training_algorithm,page_number,window,clusters_x,clusters
 	while n < int(page_number):
 		#print n
 		wiki_list = get_google_from_one_link(google_url_list[i])
-		#print wiki_list
 		for l in range(len(wiki_list)):
 			if n >= int(page_number):
 				#print "se salio?"
@@ -111,9 +110,9 @@ def qa_system(question,training_algorithm,page_number,window,clusters_x,clusters
 	for l in i_list:
 		o_list.append(FOLDER_LEMMA + l[len(FOLDER_TXT):])
 	print "Lemmatizando"
-	lemmatizar_varios_documentos(i_list,o_list)
+	lemmatizar_varios_documentos(i_list,o_list,v_expand)
 	lemmatizetime = time() - t_ - onlinetime
-	question_lemma_document = question_preprocessing(question,FOLDER_QUESTION)
+	question_lemma_document = question_preprocessing(question,FOLDER_QUESTION,v_expand)
 
 
 	

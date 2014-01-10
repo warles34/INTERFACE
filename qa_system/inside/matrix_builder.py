@@ -67,6 +67,7 @@ class WeightedMatrix:
 		self.training_time = 0
 		self.recall_time = 0
 		self.total_time = 0
+		self.iterations = 0
 
 
 	def __str__(self):
@@ -265,7 +266,7 @@ class WeightedMatrix:
 
 
 
-	def create_SOM(self,x,y,I,LR=0.0005):
+	def create_SOM(self,x,y,I,LR=0.05):
 		#print self.word_list
 		#print self.number_distinct_words
 		#for e in self.TF_IDF_matrix:
@@ -275,7 +276,7 @@ class WeightedMatrix:
 		#exit(-1)
 		if self.SOM_cluster == None:
 			self.SOM_cluster = SOM(self.training_algorithm,x,y,self.number_distinct_words,LR)
-		self.SOM_cluster.train(I,self.TF_IDF_matrix)
+		self.iterations = self.SOM_cluster.train(I,self.TF_IDF_matrix)
 
 
 	def test(self):

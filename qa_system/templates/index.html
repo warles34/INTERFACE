@@ -27,11 +27,14 @@
 					<th>Tiempo de Entrenamiento</th>
 					<th>Tiempo de Recall</th>
 					<th>Algoritmo Utilizado</th>
+					<th>Numero de Iteraciones</th>
+					<th>Respuesta Correcta</th>
+
 				</tr>
 				{% for r in results %}
 					<tr>
 						<td><font size="3">{{r.0.question}}</font></td>
-						<td><font size="2">
+						<td><font size="1">
 							{% for d in r.1 %}
 								{{d.content_txt}}
 								<br><br>
@@ -48,6 +51,8 @@
 						<td>{{r.0.training_time}}</td>
 						<td>{{r.0.recall_time}}</td>
 						<td>{{r.0.training_algorithm}}</td>
+						<td>{{r.0.iterations}}</td>
+						<td>{{r.0.supervised_answer}}</td>
 					</tr>
 				{% endfor %}
 			</table>
@@ -59,10 +64,14 @@
 {% else %}
 
 	<form action="." method="POST">
-		Al realizar el TEST el sistema no tomara en cuenta .
+		Al realizar el TEST el sistema no tomara en cuenta .<br>
 		{% csrf_token %}
 		{{form.as_p}}
 		<input type="submit" name="test" value="TEST"/>
+	</form>
+	<form action="show/" method="POST">
+		{% csrf_token %}
+		<input type="submit" name="test" value="MOSTRAR"/>
 	</form>
 {% endif %}	
 

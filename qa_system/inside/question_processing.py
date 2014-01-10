@@ -11,11 +11,11 @@ from lemmatizadorWordnet import lemmatizar_documento
 	la introduzco dentro de la matriz de pesos
 '''
 
-def question_preprocessing(question, container_folder):
+def question_preprocessing(question, container_folder,v_expand):
 	f = open(container_folder + 'temp.txt','w')
 	f.write(question)
 	f.close()
-	lemmatizar_documento(container_folder + 'temp.txt',container_folder + 'question.txt')
+	lemmatizar_documento(container_folder + 'temp.txt',container_folder + 'question.txt',v_expand)
 	return container_folder + 'question.txt'
 	
 

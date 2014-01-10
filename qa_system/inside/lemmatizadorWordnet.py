@@ -27,7 +27,6 @@ import sys
 import os
 import subprocess
 import aspell
-
 import nltk
 import pprint
 import thread
@@ -76,11 +75,11 @@ def NER_separation(direccion):
 	doc=subprocess.check_output(["java", "-mx600m", "edu.stanford.nlp.ie.crf.CRFClassifier", "-loadClassifier", "/Users/warles34/Documents/Research/CODE/Tesis/stanford-ner-2012-11-11/classifiers/english.conll.4class.distsim.crf.ser.gz", "-textFile", direccion])
 	return doc
 
-def entity_noentity_extraction(doc):
+def entity_noentity_extraction(doc,v_expand):
 	entidad=re.findall(entidadform,doc)
 	entidad = [w.lower() for w in entidad]
 	no_entidad=re.findall(no_entidadform,doc)
-	no_entidad = root(no_entidad)
+	no_entidad = root(no_entidad,v_expand)
 	return (entidad,no_entidad)
 	
 
@@ -109,7 +108,7 @@ def quitarSufijo(word,l):
 	return nueva
 
 
-def root(old_lista,l=""):
+def root(old_lista,v_expand,l=""):
 	lista = []
 	nuevapre = []
 	nuevasu = []
@@ -139,10 +138,20 @@ def root(old_lista,l=""):
 				new_lista.append(word)
 		elif wn.synsets(word) != []:
 			#print "Se encuentra en WordNet: " + word
-			new_lista.append(lemmatizar(word))
+			word = lemmatizar(word)
+			new_lista.append(word)
+			#print [l.name for s in wn.synsets(word) for l in s.lemmas]
+	if v_expand:
+		expandir(new_lista)
 	return new_lista
 
 
+def expandir(new_lista):
+	expantion_list = []
+	old = new_lista
+	for word in old:
+		expantion_list.extend([l.name for s in wn.synsets(word) for l in s.lemmas])
+	new_lista.extend(list(set(expantion_list)))
 
 
 	#print new_lista
@@ -161,11 +170,11 @@ def lemmatizar(elem):
 	return elem
 
 
-def lemmatizar_documento(i,o):
+def lemmatizar_documento(i,o,v_expand):
 	print o 
 	doc = NER_separation(i)
-	(e,ne) = entity_noentity_extraction(doc)
-	e.extend(root(ne))
+	(e,ne) = entity_noentity_extraction(doc,v_expand)
+	e.extend(root(ne,v_expand))
 	docSalida = open(o,'w')
 	for elem in e:
 		docSalida.write(elem)
@@ -173,7 +182,7 @@ def lemmatizar_documento(i,o):
 	docSalida.close()
 
 
-def lemmatizar_varios_documentos(i_list, o_list):
+def lemmatizar_varios_documentos(i_list, o_list,v_expand):
 	all_doc = ""
 	division = "\n\n-----------------------------------------------------------------------------------------\n\n"
 	document_unit_form = re.compile(r'(.*?)-----------------------------------------------------------------------------------------',re.DOTALL)
@@ -196,8 +205,8 @@ def lemmatizar_varios_documentos(i_list, o_list):
 	print 
 	all_ =  re.findall(document_unit_form,doc)
 	for elem in range(len(all_)):
-		(e,ne) = entity_noentity_extraction(all_[elem])
-		e.extend(root(ne))
+		(e,ne) = entity_noentity_extraction(all_[elem],v_expand)
+		e.extend(root(ne,v_expand))
 		f = open(o_list[elem],'w')
 		for word in e:
 			f.write(word+"\n")
@@ -211,6 +220,7 @@ if __name__ == '__main__':
 	present_doc = 0.0
 	tiempo = time.time()
 	listFiles = os.listdir(sys.argv[1])[4:]
+	v_expand = 0
 	for l in listFiles:
 		bigs = len(listFiles)
 		try:
@@ -227,7 +237,7 @@ if __name__ == '__main__':
 			if not os.path.isfile(o):
 				print o 
 				(e,ne) = entity_noentity_extraction(NER_separation(i))
-				e.extend(root(ne))
+				e.extend(root(ne,v_expand))
 				docSalida = open(o,'w')
 				for elem in e:
 					docSalida.write(elem)
