@@ -22,13 +22,7 @@
 					<th>Pregunta</th>
 					<th wigth="600">Respuestas</th>
 					<th wigth="200">Link de Origen</th>
-					<th>Tiempo de Conexion a Internet</th>
-					<th>Tiempo de Pre-procesamiento</th>
-					<th>Tiempo de Entrenamiento</th>
-					<th>Tiempo de Recall</th>
-					<th>Algoritmo Utilizado</th>
-					<th>Numero de Iteraciones</th>
-					<th>Respuesta Correcta</th>
+					
 
 				</tr>
 				{% for r in results %}
@@ -46,13 +40,7 @@
 								<br><br>
 							{% endfor %}
 						</font></td>
-						<td>{{r.0.retrieval_time}}</td>
-						<td>{{r.0.preprocessing_time}}</td>
-						<td>{{r.0.training_time}}</td>
-						<td>{{r.0.recall_time}}</td>
-						<td>{{r.0.training_algorithm}}</td>
-						<td>{{r.0.iterations}}</td>
-						<td>{{r.0.supervised_answer}}</td>
+						
 					</tr>
 				{% endfor %}
 			</table>
