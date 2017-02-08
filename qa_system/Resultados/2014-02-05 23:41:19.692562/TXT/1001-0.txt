@@ -1,0 +1,1 @@
+In addition to using protocol encryption via TLS, STUN also has built-in authentication and message-integrity mechanisms via specialized STUN packet types.

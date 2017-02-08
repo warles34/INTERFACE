@@ -98,14 +98,16 @@ def qa_system(question,training_algorithm,v_expand,page_number,window,clusters_x
 			new_destiny = FOLDER_LEMMA + str(identi) + ".txt"
 			identi+=1
 			transform_from_url(x[0],new_archive_txt)
-			used_links.append(x[0])
-			i_list.extend(extract_paragraph_from_snipp(new_archive_txt,x[1]))
+			new_d = extract_paragraph_from_snipp(new_archive_txt,x[1])
+			i_list.extend(new_d)
+			used_links.extend([x[0]]*len(new_d))
 			os.remove(new_archive_txt)
 			n+=1
 			#print n
 		i+=1
 
 	onlinetime = time()-t_
+	print i_list
 	
 	for l in i_list:
 		o_list.append(FOLDER_LEMMA + l[len(FOLDER_TXT):])

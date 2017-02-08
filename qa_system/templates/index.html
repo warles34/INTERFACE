@@ -6,15 +6,15 @@
 </head>
 <body bgcolor=D2DCF7>
 <hr>	
-<h1>Question Answering System, By Charles Ochoa.</h1>
+<h1>Question Answering System, by Charles Ochoa.</h1>
 	<hr/>
 {% if asked %}
-	Gracias por preguntar
+	Thanks for asking
 	<form>
 		<input Type="BUTTON" VALUE="ASK again" ONCLICK="window.location.href='http://127.0.0.1:8000/qa_system/'"> 
 	</form>
 	<br>
-	<h3>RESULTADOS<h3>
+	<h3>RESULTS<h3>
 		
 			{% csrf_token %}
 			<table border="1" bgcolor=D2F7D9>
@@ -52,7 +52,7 @@
 {% else %}
 
 	<form action="." method="POST">
-		Al realizar el TEST el sistema no tomara en cuenta .<br>
+		Al realizar el TEST el sistema no tomara en cuenta la pregunta realizada.<br>
 		{% csrf_token %}
 		{{form.as_p}}
 		<input type="submit" name="test" value="TEST"/>

@@ -1,0 +1,9 @@
+major
+class
+nutrient
+carbohydrate
+fat
+mineral
+protein
+vitamin
+water

@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>QAS</title>
+</head>
+<body bgcolor=D2DCF7>
+<hr>	
+<h1>Question Answering System, by Charles Ochoa.</h1>
+	<hr/>
+
+	<form action="." method="POST">
+		{% csrf_token %}
+		{{show.as_p}}
+		<input type="submit" name="test" value="LISTAR"/>
+	</form>
+
+{% if searched %}
+	<form>
+		<input Type="BUTTON" VALUE="Volver a Preguntar" ONCLICK="window.location.href='http://127.0.0.1:8000/qa_system/'"> 
+	</form>
+	<br>
+			<table border="1" bgcolor=D2F7D9>
+				<tr>
+					<th>Pregunta</th>
+					<th width="600">Respuestas</th>
+					<th>Link s Wikipedia</th>
+					<th>Tiempo de Conexion a Internet</th>
+					<th>Tiempo de Pre-procesamiento</th>
+					<th>Tiempo de Entrenamiento</th>
+					<th>Tiempo de Recall</th>
+					<th>Algoritmo Utilizado</th>
+					<th>Numero de Iteraciones</th>
+					<th>Respuesta Correcta</th>
+					<th>Vocabulario expandido</th>
+
+				</tr>
+				{% for r in results %}
+					<tr>
+						<th width="800"><font size="3">{{r.0.question}}</font></td>
+						<th><font size="1">
+							{% for d in r.1 %}
+								{{d.content_txt}}
+								<br><br>
+							{% endfor %}
+						</font></td>
+						<th><font size="1">
+							{% for d in r.1 %}
+								{{d.link}}
+								<br><br>
+							{% endfor %}
+						</font></td>
+						
+						<td>{{r.0.retrieval_time}}</td>
+						<td>{{r.0.preprocessing_time}}</td>
+						<td>{{r.0.training_time}}</td>
+						<td>{{r.0.recall_time}}</td>
+						<td>{{r.0.training_algorithm}}</td>
+						<td>{{r.0.iterations}}</td>
+						<td>{{r.0.supervised_answer}}</td>
+						<td>{{r.0.expanded_vocabulary}}</td>
+					</tr>
+				{% endfor %}
+			</table>
+{% endif %}	
+
+
+</body>
+</html>

@@ -10,7 +10,7 @@ class Document(models.Model):
 	supervised_ranking = models.IntegerField()
 
 	def __unicode__(self):  # Python 3: def __str__(self):
-		return self.link
+		return str(self.link) + "|" + str(self.supervised_ranking)
 
 	
 

@@ -52,7 +52,6 @@ class SOM:
     def train(self, iterations=1000, train_vector=[[]], epsilon=0.1):
         #print "DENTRO DE SOMPY TRAIN"
         for t in range(len(train_vector)):
-            #print "   train_vector[t]  =  " + str(len(train_vector[t]))
             train_vector[t] = scipy.array(train_vector[t])
         time_constant = iterations/log(self.radius)
         delta_nodes = scipy.array([[[0.0 for i in range(self.FV_size)] for x in range(self.width)] for y in range(self.height)])
@@ -60,12 +59,8 @@ class SOM:
         old = delta_nodes
         while i <= iterations and self.difference(old) > epsilon:
             print i 
-            #print "difference(new,old)"
             print self.difference(old)
             print self.learning_rate
-            #print "epsilon"
-            #print self.difference(old) > epsilon
-            #print self.difference(delta_nodes)
             i+=1
             st = "[["
             for x in range(self.height):
@@ -74,10 +69,6 @@ class SOM:
                         st+=str(int(self.nodes[x,y,e]))+" "
                     st+= "] , ["
                 st+="]]\n\n"
-            #for r in range(delta_nodes):
-            #    for c in range(delta_nodes[r]):
-            #        for v in range(delta_nodes[r][c]):
-            #                        
             delta_nodes.fill(0.0)
             radius_decaying=self.radius*exp(-1.0*i/time_constant)
             rad_div_val = 2 * radius_decaying * i
@@ -88,29 +79,13 @@ class SOM:
             for j in range(len(train_vector)):
 
                 best = self.best_match(train_vector[j])
-                #print "Nodo ganador: " + str(best)
-                #print "radius_decaying: " + str(radius_decaying)
-                #print "Nodos en total a modificar: " 
-                #print self.find_neighborhood(best, radius_decaying)
                 for loc in self.find_neighborhood(best, radius_decaying):
                     influence = exp( (-1.0 * (loc[2]**2)) / rad_div_val)
-                    #print "influencia: " + str(influence)
-                    #sys.stdout.write("Influence: " + "/" + str(influence) + "\n")
                     inf_lrd = influence*learning_rate_decaying
-                    #print "influencia * learning_rate_decaying:  " + str(inf_lrd)
-                    #print "variacion del delta :" + str(inf_lrd*(train_vector[j]-self.nodes[loc[0],loc[1]]))
                     delta_nodes[loc[0],loc[1]] += inf_lrd*(train_vector[j]-self.nodes[loc[0],loc[1]])
-                    #print delta_nodes[loc[0],loc[1]]
             old = self.nodes
             
             self.nodes = delta_nodes + self.nodes
-            #print "Old nodes"
-            #print old[0][0][0]
-            #print "delta_nodes"
-            #print delta_nodes[0][0][0]
-            #print "new nodes"
-            #print self.nodes[0][0][0]
-            #exit(-1)
         sys.stdout.write("\n")
         return i
     
@@ -132,30 +107,7 @@ class SOM:
     # Returns location of best match, uses Euclidean distance
     # target_FV is a scipy array
     def best_match(self, target_FV):
-        #print "INSIDE BEST_MATCH"
-        #print "   " + str(target_FV) + str(len(target_FV))
-        '''print "NODOS"
-        for row_nodes in self.nodes:
-            for node in row_nodes:
-                print node
-        print
-        print 
-        print "TARGET"
-        print target_FV
-        print "PASOS SEGUIDOS"
-        print "self.nodes - target_FV"
-        print str(self.nodes - target_FV)
-        print "((self.nodes - target_FV)**2)"
-        print str((self.nodes - target_FV)**2)
-        print "((self.nodes - target_FV)**2).max(axis=2)"
-        print str(((self.nodes - target_FV)**2).max(axis=2))
-        print "((((self.nodes - target_FV)**2).max(axis=2))**0.5)"
-        print str(((((self.nodes - target_FV)**2).max(axis=2))**0.5))
-        print "scipy.argmin((((self.nodes - target_FV)**2).max(axis=2))**0.5)"
-        print str(scipy.argmin((((self.nodes - target_FV)**2).max(axis=2))**0.5))
-        exit(-1)'''
         if self.training_algorithm == "eu":
-            #print "USING EUCLIDEAN"
             loc = self.euclidean_coefficient(target_FV)
         elif self.training_algorithm == "co":
             #print "USING COSINE"

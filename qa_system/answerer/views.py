@@ -11,8 +11,9 @@ from answerer.models import *
 
 # Create your views here.
 def index(request):
-	#test_set = ['Why is the sky blue','Why do japanese kill whales','Why is Andrew Johnson important']
-	test_set = ['Why is the sky blue','Why do japanese kill whales','Why is Andrew Johnson important','Why did Abigail drink blood','Why are proteins important to sports people','Why would you get sick from running','Why do seatbelts save lives','Why was king Christian X so influential','Why are your aubergines wilting','Why do earphones break so quickly','Why is tendonitis painful and potentially dangerous']
+	#test_set = ['Why is the sky blue','Why do japanese kill whales']
+	test_set = ['Why do japanese kill whales','Why is Andrew Johnson important','Why did Abigail drink blood','Why are proteins important to sports people','Why would you get sick from running','Why do seatbelts save lives','Why was king Christian X so influential','Why are your aubergines wilting','Why do earphones break so quickly','Why is tendinitis painful and potentially dangerous','Why do knuckles pop','Why is the cow so important to hindus']
+	#test_set = ['Why did the investigation into 9/11 cease','Why is my nat type strict','Why do people fall in love and stay in love with sociopaths','Why did the Greeks build temples',"Why does the check engine turn on every time you start it without the thermostat but with the thermostat it doesn't",'Why should you not destroy the environment were animals live','Why do automakers want to eliminate dealers','Why does picric acid is used for treatment for burns']
 	asked = False # Definir si se realizo la pregunta
 	quest = ""
 	results = []
@@ -40,7 +41,7 @@ def index(request):
 					print v_expand
 					print train_algo
 					r = Results.objects.get(question=quest,expanded_vocabulary=v_expand,training_algorithm=train_algo)
-					questions_id.append(r.id)
+					questions_id.append(r)
 				except Exception, e:
 					#for elem in all_results:
 					#	if elem.question == quest:
@@ -58,6 +59,14 @@ def index(request):
 						r.save()
 						for x in range(0,3):
 							try:
+								print x
+								print w_matrix.documents_content[0]
+								print w_matrix.document_links[0]
+								print 
+								print 
+								print
+								print w_matrix.documents_content[1]
+								print w_matrix.document_links[1]
 								d = Document(content_txt=w_matrix.documents_content[w_matrix.most_similar_document_indexes[x][0]],link=w_matrix.document_links[w_matrix.most_similar_document_indexes[x][0]],to_result=r,automatic_ranking=x,supervised_ranking=0)
 								d.save()
 							except Exception, e:
@@ -89,7 +98,6 @@ def update(request):
 				print request.POST['question']
 				print request.POST['algorithm']
 				res = Results.objects.get(question=request.POST['question'],training_algorithm=request.POST['algorithm'])
-
 				question = res.question
 				ans = Document.objects.filter(to_result=res.id)
 				for x in range(len(ans)):
@@ -102,21 +110,39 @@ def update(request):
 			if int(request.POST['succesful_answer']):
 				best = Document.objects.get(pk=int(request.POST['succesful_answer']))
 				print best.content_txt
+				res = best.to_result
+				answs = Document.objects.filter(to_result=res.id)
+				for answ in answs:
+					if best.id == answ.id:
+						print "SI ESTA CONTENIDA"
+					answ.supervised_ranking=0
 				best.supervised_ranking=1
 				best.save()
-				res = Results.objects.get(pk=best.to_result)
+				print "BEST"
+				print best.id
+				print best.to_result.id
+				print "res"
+				print res
 				answs = Document.objects.filter(to_result=res.id)
+				print answs
 				for x in range(len(answs)):
-					if answs[x]:
+
+					if answs[x].supervised_ranking:
+						print "ASIGNACION"
+						print x 
+						print answs[x].supervised_ranking
+						print
+						print
 						res.supervised_answer = x
-						res.to_success_answer = answs[x].id
+						res.to_success_answer = answs[x]
 						res.save()
 						break
-
+			
+				res.save()
 			request.method = ""
 
 		#res.retrieval_time = 0
-		#res.save()
+		
 
 	#for r in Results.objects.all():
 	#	print r.question

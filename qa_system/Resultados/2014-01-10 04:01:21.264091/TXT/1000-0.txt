@@ -1,0 +1,1 @@
+This is a selected list of video game system emulators. For information about emulating specific systems, including those not covered by the emulators in this list, see the respective article for each system.

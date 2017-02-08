@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>QAS update</title>
+</head>
+<body bgcolor=D2DCF7>
+<hr>	
+<h1>Question Answering System, by Charles Ochoa.</h1>
+	<hr/>
+
+	
+	<form>
+		<input Type="BUTTON" VALUE="ASK again" ONCLICK="window.location.href='http://127.0.0.1:8000/qa_system/'"> 
+	</form>
+	<br>
+	
+	<form action="." method="POST" align="center">
+		{% csrf_token %}
+		<select name="question">
+
+			{% for r in results %}
+		   		<option value="{{ r.question }}">{{r.question}}</option> 
+		   	{% endfor %}
+
+		</select>
+		<select name="algorithm">
+
+			{% for r in results %}
+		   		<option value={{ r.training_algorithm }}>{{r.training_algorithm}}</option> 
+		   	{% endfor %}
+
+		</select>
+		<br>
+		<input type="submit" name="test" value="BUSCAR"/>
+
+	</form>
+
+		{% if searched %}
+		<form action="." method="POST">
+			{% csrf_token %}
+			<p>{{question}}</p>
+				<table border="1" bgcolor=D2F7D9>
+					{% for a in answers %}
+					<tr>
+						<td><font size="2">{{a.id}}</font><input type="radio" name="succesful_answer" value={{a.id}}><br></td>
+					</tr>
+					{% endfor %}
+					<tr>
+						<td>Ninguna de las anteriores<input type="radio" name="succesful_answer" value=0 checked="checked"></td>
+					</tr>
+				</table>
+				<br>
+				<input type="submit" name="test" value="MODIFICAR"/>
+				{% endif %}	
+		</form>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+solanum
+eggplant
+fruit
+rot
+primary
+symptom
+eggplant
+dark
+brown
+fruit
+expand
+light
+tan
+region
+sign
+growth
+lesion

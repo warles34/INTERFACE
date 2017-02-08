@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>QAS</title>
+</head>
+<body>
+<hr>	
+<h1>Question Answering System, By Charles Ochoa.</h1>
+	<hr/>
+{% if asked %}
+	Gracias por preguntar
+	<form>
+		<input Type="BUTTON" VALUE="ASK again" ONCLICK="window.location.href='http://127.0.0.1:8000/index/'"> 
+	</form>
+	<br>
+	<p> La pregunta fue: {{question}}</p>
+	{% block answer %}
+		<h3>Lista de Respuestas</h3>
+		{% for one in answer %}
+			<h4>Puntuacion de respuesta: {{ one.1 }} </h4>
+			{%for part in one.0 %}
+				<p>{{ part }}</p>
+			{% endfor %}
+			<hr>
+		{% endfor %}
+	{% endblock %}
+{% else %}
+	
+	<form action="." method="POST" align="center">
+		{% csrf_token %}
+		{{form.as_p}}
+		<input type="submit" value="ASK"/>
+	</form>
+{% endif %}	
+
+</body>
+</html>
